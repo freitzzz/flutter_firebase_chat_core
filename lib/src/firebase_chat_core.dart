@@ -147,7 +147,13 @@ class FirebaseChatCore {
       'type': types.RoomType.direct.toShortString(),
       'updatedAt': FieldValue.serverTimestamp(),
       'userIds': users.map((u) => u.id).toList(),
-      'userRoles': null,
+      'userRoles': Map.fromEntries(
+        [
+          ...users.map(
+            (u) => MapEntry(u.id, u.role?.value),
+          ),
+        ],
+      ),
     });
 
     return types.Room(
@@ -449,5 +455,21 @@ class FirebaseChatCore {
             },
           ),
         );
+  }
+}
+
+extension on types.Role {
+  String get value {
+    switch (this) {
+      case types.Role.admin:
+        return 'admin';
+      case types.Role.agent:
+        return 'agent';
+      case types.Role.moderator:
+        return 'moderator';
+      case types.Role.user:
+      default:
+        return 'user';
+    }
   }
 }
